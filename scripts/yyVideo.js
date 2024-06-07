@@ -39,10 +39,24 @@ function video_open(path)
     else {
         gameCanvas.yyvideoplayer.pause();
     }
-
-
-
+    
     const myVideo = gameCanvas.yyvideoplayer;
+    myVideo.supposedCurrentTime = 0;
+    myVideo.addEventListener('timeupdate', function() {
+        if (!myVideo.seeking) {
+            myVideo.supposedCurrentTime = myVideo.currentTime;
+        }
+    });
+    myVideo.addEventListener('seeking', function() {
+        var delta = myVideo.currentTime - myVideo.supposedCurrentTime;
+        if (Math.abs(delta) > 0.01) {
+            console.log("Seeking is disabled");
+            myVideo.currentTime = myVideo.supposedCurrentTime;
+        }
+    });
+    myVideo.addEventListener('ended', function() {
+        myVideo.supposedCurrentTime = 0;
+    });
 
     var srcpath =CheckWorkingDirectory(path); 
 

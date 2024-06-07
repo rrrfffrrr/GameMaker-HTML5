@@ -123,9 +123,21 @@ function video_open(path)
                 // Autoplay was prevented.
                 // Show a "Play" button so that user can start playback.
                 debug("video_open failed. User must interact with the page before video with audio can be played. Attempting to play the video muted");
-
+                
                 myVideo.muted = true;
-                myVideo.play();
+                var nextPromise = myVideo.play();
+                nextPromise.then(_ => {
+                    // Play success!
+                }).catch(error => {
+                    debug("Fail to load video from src");
+                    var map = ds_map_create();
+        
+                    ds_map_add(map, "type", "video_error");
+        
+                    g_pBuiltIn.async_load = map;
+                    g_pObjectManager.ThrowEvent(EVENT_OTHER_SOCIAL, 0);
+                    ds_map_destroy(map);
+                });
                 add_unmute_listener();
             });
         }

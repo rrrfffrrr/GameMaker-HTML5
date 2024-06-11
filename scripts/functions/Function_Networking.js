@@ -457,6 +457,14 @@ function network_send_packet(_socket, _buffer, _size) {
     }
     // (WebSocket.send doesn't return anything so we don't really know)
     skt.send(pktBuf);
+    if (skt.readyState == 3) {
+        yyDispatchNetworkingEvent({
+            "type": NETWORK_TYPE_DISCONNECT,
+            "id": wrap.index, "succeeded": 0,
+            "ip": "127.0.0.1", "port": "80",
+            "socket": wrap.index
+        });
+    }
     return _size;
 }
 
@@ -477,6 +485,14 @@ function network_send_raw(_socket, _buffer, _size, _options) {
     }
 
     skt.send(b);
+    if (skt.readyState == 3) {
+        yyDispatchNetworkingEvent({
+            "type": NETWORK_TYPE_DISCONNECT,
+            "id": wrap.index, "succeeded": 0,
+            "ip": "127.0.0.1", "port": "80",
+            "socket": wrap.index
+        });
+    }
     return _size;
 }
 
